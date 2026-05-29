@@ -1,0 +1,21 @@
+# Serve clean URLs (e.g. /privacy-policy instead of /privacy-policy.html)
+# Works on Apache shared hosting (cPanel, etc.)
+
+Options +FollowSymLinks -MultiViews
+RewriteEngine On
+
+# If the request is for an existing file or directory, serve it as-is.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# If a matching .html file exists, serve it (without changing the URL).
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+?)/?$ $1.html [L]
+
+# Redirect direct .html requests to the clean URL (301 permanent).
+RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# Redirect /index or /index.html to the root.
+RewriteRule ^index/?$ / [R=301,L]
